@@ -1,7 +1,7 @@
 SequenceFile Browser
 ====================
 
-This is just a small tool that allows SequenceFile Browsing.
+This is just a small tool that allows Hadoop SequenceFile Browsing.
 
 ## UI
 Topmost text box allows you to specify SequenceFile URI (e.g. hdfs://hadoop-master:8020/user/sbd/file.sq) and open it.
