@@ -1,6 +1,6 @@
 package pl.edu.icm.tools.sequencefile.browser
 
-import org.apache.hadoop.io.{Writable, SequenceFile}
+import org.apache.hadoop.io.{NullWritable, Writable, SequenceFile}
 import org.apache.hadoop.fs.Path
 import org.apache.hadoop.conf.Configuration
 import com.typesafe.config.{ConfigFactory, ConfigException}
@@ -34,12 +34,17 @@ class AppModel {
     valuePreviewModel.element = value
   }
 
+  def newWritable(c: Class[_]): Writable =
+    if (c == classOf[NullWritable])
+      NullWritable.get()
+    else
+      c.newInstance.asInstanceOf[Writable]
+
   def setupReader(uri: String) {
     reader.foreach(IOUtils.closeQuietly)
-
     reader = Some(new SequenceFile.Reader(conf, SequenceFile.Reader.file(new Path(uri))))
-    key = reader.get.getKeyClass.newInstance.asInstanceOf[Writable]
-    value = reader.get.getValueClass.newInstance.asInstanceOf[Writable]
+    key = newWritable(reader.get.getKeyClass)
+    value = newWritable(reader.get.getValueClass)
     readNext()
   }
 
@@ -49,5 +54,4 @@ class AppModel {
   }
 
   def readerPosition = reader.get.getPosition
-
 }
